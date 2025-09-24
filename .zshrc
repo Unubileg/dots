@@ -70,4 +70,4 @@ function y() {
 	rm -f -- "$tmp"
 }
 
-[ -f "/Users/unoppa/.ghcup/env" ] && . "/Users/unoppa/.ghcup/env" # ghcup-env
+[ -f "/Users/unoppa/.ghcup/env" ] && . "/Users/unoppa/.ghcup/env" # ghcup-envexport PATH="$HOME/bin:$PATH"
