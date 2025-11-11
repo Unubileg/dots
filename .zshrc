@@ -71,3 +71,6 @@ function y() {
 }
 
 [ -f "/Users/unoppa/.ghcup/env" ] && . "/Users/unoppa/.ghcup/env" # ghcup-envexport PATH="$HOME/bin:$PATH"
+
+# opencode
+export PATH=/Users/unoppa/.opencode/bin:$PATH

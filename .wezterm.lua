@@ -9,29 +9,51 @@ config.font_size = 14
 -- Window UI
 config.enable_tab_bar = false
 config.window_decorations = "RESIZE"
-config.window_background_opacity = 0.75
+config.window_background_opacity = 0.95 -- Slight transparency
 config.macos_window_background_blur = 25
 
--- Load the Poimandres theme
--- local poimandres = dofile(wezterm.home_dir .. "/.config/wezterm/poimandres.lua")
+-- Optional background image
+-- config.window_background_image = wezterm.home_dir .. "/Downloads/blue2.jpg"
+config.window_background_image_hsb = {
+	brightness = 1.0,
+	hue = 1.0,
+	saturation = 1.0,
+}
 
--- Colors:
--- config.colors = poimandres.setup({
--- 	flavour = "base",
--- })
-
+-- Colors (Ayu Dark theme)
 config.colors = {
-	background = "rgba(30, 30, 32, 0.65)",
-	foreground = "#ECECEC",
+	background = "#0F1419", -- Ayu Dark background
+	foreground = "#f2f2f2", -- Light foreground
 
-	cursor_bg = "#34495e",
-	-- cursor_bg = "rgba(52, 73, 94, 0.7)",
-	-- cursor_fg = "rgba(255, 255, 255, 0)",
-	-- cursor_fg = "black",
-	cursor_border = "#34495e",
+	cursor_bg = "#f2f2f2",
+	cursor_border = "#f2f2f2",
+	cursor_fg = "#0F1419",
 
-	selection_bg = "fffacd",
-	selection_fg = "black",
+	selection_bg = "#2b2b2b", -- dark gray selection
+	selection_fg = "#f2f2f2",
+
+	split = "#44475a",
+
+	ansi = {
+		"#0F1419",
+		"#f07178",
+		"#ffb454",
+		"#ffcb6b",
+		"#33d9e4",
+		"#d6deeb",
+		"#c3e88d",
+		"#f2f2f2",
+	},
+	brights = {
+		"#686868",
+		"#f07178",
+		"#ffb454",
+		"#ffcb6b",
+		"#33d9e4",
+		"#d6deeb",
+		"#c3e88d",
+		"#ffffff",
+	},
 }
 
 -- Keys
