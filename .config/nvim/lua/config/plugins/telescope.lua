@@ -1,72 +1,51 @@
-
 return {
-  "nvim-telescope/telescope.nvim",
-  branch = "0.1.x",
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-    { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-    "nvim-tree/nvim-web-devicons",
-    "andrew-george/telescope-themes",
-    "nvim-telescope/telescope-ui-select.nvim", -- optional: UI select extension
-  },
-  config = function()
-    local telescope = require("telescope")
-    local actions = require("telescope.actions")
-    local builtin = require("telescope.builtin")
+	"nvim-telescope/telescope.nvim",
+	branch = "0.1.x",
+	dependencies = {
+		"nvim-lua/plenary.nvim",
+		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+		"nvim-tree/nvim-web-devicons",
+		"folke/todo-comments.nvim",
+	},
+	config = function()
+		local telescope = require("telescope")
+		local actions = require("telescope.actions")
+		local transform_mod = require("telescope.actions.mt").transform_mod
 
-    telescope.setup({
-      defaults = {
-        path_display = { "smart" },
-        mappings = {
-          i = {
-            ["<C-k>"] = actions.move_selection_previous,
-            ["<C-j>"] = actions.move_selection_next,
-          },
-        },
-      },
-      extensions = {
-        fzf = {
-          fuzzy = true,
-          override_generic_sorter = true,
-          override_file_sorter = true,
-          case_mode = "smart_case",
-        },
-        themes = {
-          enable_previewer = true,
-          enable_live_preview = true,
-          persist = {
-            enabled = true,
-            path = vim.fn.stdpath("config") .. "/lua/colorscheme.lua",
-          },
-        },
-        ["ui-select"] = {
-          require("telescope.themes").get_dropdown({})
-        },
-      },
-    })
+		local trouble = require("trouble")
+		local trouble_telescope = require("trouble.sources.telescope")
 
-    telescope.load_extension("fzf")
-    telescope.load_extension("themes")
-    telescope.load_extension("ui-select") -- optional
+		-- or create your custom action
+		local custom_actions = transform_mod({
+			open_trouble_qflist = function(prompt_bufnr)
+				trouble.toggle("quickfix")
+			end,
+		})
 
-    -- 🔑 Keymaps
+		telescope.setup({
+			defaults = {
+				path_display = { "smart" },
+				mappings = {
+					i = {
+						["<C-k>"] = actions.move_selection_previous, -- move to prev result
+						["<C-j>"] = actions.move_selection_next, -- move to next result
+						["<C-q>"] = actions.send_selected_to_qflist + custom_actions.open_trouble_qflist,
+						["<C-t>"] = trouble_telescope.open,
+					},
+				},
+			},
+		})
 
-    -- File-related
-    vim.keymap.set("n", "<leader>pr", "<cmd>Telescope oldfiles<CR>", { desc = "Recent files" })
+		telescope.load_extension("fzf")
 
-    vim.keymap.set("n", "<leader>pWs", function()
-      local word = vim.fn.expand("<cWORD>")
-      builtin.grep_string({ search = word })
-    end, { desc = "Find word under cursor" })
+		-- set keymaps
+		local keymap = vim.keymap -- for conciseness
 
-    vim.keymap.set("n", "<leader>ths", "<cmd>Telescope themes<CR>", { noremap = true, silent = true, desc = "Theme Switcher" })
-
-    -- LSP-related
-    vim.keymap.set("n", "gD", "<cmd>Telescope lsp_definitions<CR>", { desc = "Go to definition (Telescope)" })
-    vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<CR>", { desc = "Find references" })
-    vim.keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", { desc = "Find implementations" })
-    vim.keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", { desc = "Find type definitions" })
-    vim.keymap.set("n", "<leader>ds", "<cmd>Telescope lsp_document_symbols<CR>", { desc = "Document symbols" })
-    vim.keymap.set("n", "<leader>ws", "<cmd>Telescope lsp_workspace_symbols<CR>", { desc = "Workspace symbols" })
-  end,
+		keymap.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Fuzzy find files in cwd" })
+		keymap.set("n", "<leader>fr", "<cmd>Telescope oldfiles<cr>", { desc = "Fuzzy find recent files" })
+		keymap.set("n", "<leader>fs", "<cmd>Telescope live_grep<cr>", { desc = "Find string in cwd" })
+		keymap.set("n", "<leader>fc", "<cmd>Telescope grep_string<cr>", { desc = "Find string under cursor in cwd" })
+		keymap.set("n", "<leader>ft", "<cmd>TodoTelescope<cr>", { desc = "Find todos" })
+		keymap.set("n", "<leader>fk", "<cmd>Telescope keymaps<cr>", { desc = "Find todos" })
+	end,
 }

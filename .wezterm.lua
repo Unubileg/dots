@@ -9,7 +9,7 @@ config.font_size = 14
 -- Window UI
 config.enable_tab_bar = false
 config.window_decorations = "RESIZE"
-config.window_background_opacity = 0.95 -- Slight transparency
+config.window_background_opacity = 0.85 -- Slight transparency
 config.macos_window_background_blur = 25
 
 -- Optional background image
