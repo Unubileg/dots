@@ -4,26 +4,31 @@ return {
 	config = function()
 		local conform = require("conform")
 
+		-- Setup formatters
 		conform.setup({
-            formatters = {
-                ["markdown-toc"] = {
-                    condition = function(_, ctx)
-                        for _, line in ipairs(vim.api.nvim_buf_get_lines(ctx.buf, 0, -1, false)) do
-                            if line:find("<!%-%- toc %-%->") then
-                                return true
-                            end
-                        end
-                    end,
-                },
-                ["markdownlint-cli2"] = {
-                    condition = function(_, ctx)
-                        local diag = vim.tbl_filter(function(d)
-                            return d.source == "markdownlint"
-                        end, vim.diagnostic.get(ctx.buf))
-                        return #diag > 0
-                    end,
-                },
-            },
+			formatters = {
+				["markdown-toc"] = {
+					condition = function(_, ctx)
+						for _, line in ipairs(vim.api.nvim_buf_get_lines(ctx.buf, 0, -1, false)) do
+							if line:find("<!%-%- toc %-%->") then
+								return true
+							end
+						end
+					end,
+				},
+				["markdownlint-cli2"] = {
+					condition = function(_, ctx)
+						local diag = vim.tbl_filter(function(d)
+							return d.source == "markdownlint"
+						end, vim.diagnostic.get(ctx.buf))
+						return #diag > 0
+					end,
+				},
+				dart = {
+					command = "dart",
+					args = { "format", "-" },
+				},
+			},
 			formatters_by_ft = {
 				javascript = { "prettier" },
 				typescript = { "prettier" },
@@ -34,22 +39,18 @@ return {
 				html = { "prettier" },
 				json = { "prettier" },
 				yaml = { "prettier" },
-				-- markdown = { "prettier" },
 				graphql = { "prettier" },
 				liquid = { "prettier" },
 				lua = { "stylua" },
 				python = { "black" },
-                markdown = { "prettier" },
-                ["markdown.mdx"] = { "prettier", "markdownlint-cli2", "markdown-toc" },
+				markdown = { "prettier" },
+				["markdown.mdx"] = { "prettier", "markdownlint-cli2", "markdown-toc" },
+				dart = { "dart" },
+				flutter = { "dart" },
 			},
-			-- format_on_save = {
-			-- 	lsp_fallback = true,
-			-- 	async = false,
-			-- 	timeout_ms = 1000,
-			-- },
 		})
 
-		-- Configure individual formatters
+		-- Custom arguments for Prettier
 		conform.formatters.prettier = {
 			args = {
 				"--stdin-filepath",
@@ -60,16 +61,19 @@ return {
 				"false",
 			},
 		}
+
+		-- Custom arguments for shfmt
 		conform.formatters.shfmt = {
 			prepend_args = { "-i", "4" },
 		}
 
+		-- Keymap to format file or visual selection
 		vim.keymap.set({ "n", "v" }, "<leader>mp", function()
 			conform.format({
 				lsp_fallback = true,
 				async = false,
 				timeout_ms = 1000,
 			})
-		end, { desc = " Prettier Format whole file or range (in visual mode) with" })
+		end, { desc = "Format whole file or range with Conform" })
 	end,
 }
